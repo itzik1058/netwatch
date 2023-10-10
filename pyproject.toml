@@ -10,5 +10,16 @@ authors = ["Itzik <itzik1058@gmail.com>"]
 license = "MIT"
 readme = "README.md"
 
+[tool.poetry.scripts]
+netwatch = 'netwatch.__main__:__main__'
+
 [tool.poetry.dependencies]
 python = "^3.11"
+playwright = "^1.38.0"
+sqlalchemy = "^2.0.21"
+platformdirs = "^3.11.0"
+alembic = "^1.12.0"
+
+[tool.poetry.group.dev.dependencies]
+python-dotenv = "^1.0.0"
+
