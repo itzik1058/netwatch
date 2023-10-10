@@ -20,8 +20,6 @@ class FacebookPageWatcher(Watcher):
             browser = await p.chromium.launch()
             page = await browser.new_page()
             await page.goto(f"https://www.facebook.com/{self.page_name}/posts")
-            with open("tmp.html", "w") as f:
-                f.write(await page.content())
             article = await page.wait_for_selector('div[role="article"]')
             if not article:
                 raise Exception("post not found")
