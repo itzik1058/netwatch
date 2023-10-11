@@ -10,16 +10,16 @@ from netwatch.models.facebook import FacebookComment, FacebookPost
 
 
 class FacebookPageWatcher(Watcher):
-    def __init__(self, page_name: str):
+    def __init__(self, page: str):
         super().__init__()
-        self.page_name = page_name
+        self.page = page
 
     async def fetch(self, session: Session) -> None:
-        post = FacebookPost(page_name=self.page_name)
+        post = FacebookPost(page_name=self.page)
         async with async_playwright() as p:
             browser = await p.chromium.launch()
             page = await browser.new_page()
-            await page.goto(f"https://www.facebook.com/{self.page_name}/posts")
+            await page.goto(f"https://www.facebook.com/{self.page}/posts")
             article = await page.wait_for_selector('div[role="article"]')
             if not article:
                 raise Exception("post not found")
@@ -32,7 +32,7 @@ class FacebookPageWatcher(Watcher):
             existing_post = (
                 session.query(FacebookPost)
                 .filter_by(
-                    page_name=self.page_name,
+                    page_name=self.page,
                     post_id=post.post_id,
                 )
                 .one_or_none()
