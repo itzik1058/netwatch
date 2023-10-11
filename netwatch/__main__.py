@@ -1,16 +1,15 @@
 import asyncio
 import sys
 
-import hydra
-import hydra.core.hydra_config
-from omegaconf import DictConfig
+from hydra.utils import instantiate
+from omegaconf import OmegaConf
 
-from netwatch.core.config import CONFIG_PATH, NetwatchConfig
+from netwatch.core.config import NETWATCH_CONFIG_PATH, NetwatchConfig
 from netwatch.core.database import get_session
 
 
-async def amain(cfg: DictConfig):
-    config: NetwatchConfig = hydra.utils.instantiate(cfg)
+async def main():
+    config: NetwatchConfig = instantiate(OmegaConf.load(NETWATCH_CONFIG_PATH))
     for watcher in config.watchers:
         with get_session() as session:
             try:
@@ -20,14 +19,5 @@ async def amain(cfg: DictConfig):
                 pass
 
 
-@hydra.main(
-    config_path=str(CONFIG_PATH),
-    config_name="netwatch.yaml",
-    version_base=None,
-)
-def main(cfg: DictConfig):
-    asyncio.get_event_loop().run_until_complete(amain(cfg))
-
-
-main()
+asyncio.get_event_loop().run_until_complete(main())
 sys.exit(0)
